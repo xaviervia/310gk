@@ -1,10 +1,15 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { reverse, zip } from "ramda";
 import { polynomial } from "math-playground";
 
 import { getExamples, Plot } from "./stuff";
-import { makeStackedMatrixOfGenerators, Polynomial, upperCases, variableNames } from "./anotherstuff"
+import {
+  makeStackedMatrixOfGenerators,
+  Polynomial,
+  upperCases,
+  variableNames
+} from "./anotherstuff";
 
 const { matrix, multiply, transpose, inv } = require("mathjs");
 
@@ -20,7 +25,6 @@ const solve = (A, b) =>
 
   return row;
 }; */
-
 
 const makeRow = (input, degree) => {
   const row = [];
@@ -50,55 +54,55 @@ const plotForDegree = (inputs, degree) => {
   return zip(examples, results);
 };
 
-const Section = ({children}) => <div className="Section"> {children} </div>
+const Section = ({ children }) => <div className="Section"> {children} </div>;
 
 function App() {
-
-  const [dimensions, setDimensions] = useState(3);  
+  const [dimensions, setDimensions] = useState(3);
   const [degree, setDegree] = useState(3);
-  const [stackedMatrixOfGenerators, setStackedMatrixOfGenerators] = useState(makeStackedMatrixOfGenerators(dimensions, degree))
-  const [coefficientsNotation, setCoefficientsNotation] = useState('traditional');
-  const [variablesNotation, setVariablesNotation] = useState('traditional');
-
+  const [stackedMatrixOfGenerators, setStackedMatrixOfGenerators] = useState(
+    makeStackedMatrixOfGenerators(dimensions, degree)
+  );
+  const [coefficientsNotation, setCoefficientsNotation] = useState(
+    "traditional"
+  );
+  const [variablesNotation, setVariablesNotation] = useState("traditional");
 
   const disciplineNotations = stackedMatrix => {
     if (stackedMatrix.length > upperCases.length) {
-      setCoefficientsNotation('pedantic')
+      setCoefficientsNotation("pedantic");
     }
     if (dimensions > variableNames.length - 1) {
-      setVariablesNotation('pedantic')
+      setVariablesNotation("pedantic");
     }
-  }
+  };
 
   const handleChangeOfDegree = e => {
-    setDegree(e.target.value)
-  }
+    setDegree(e.target.value);
+  };
 
   const handleChangeOfDimensions = e => {
-    setDimensions(e.target.value)
-
-  }
+    setDimensions(e.target.value);
+  };
 
   const handleChangeOfCoefficientsNotation = e => {
-    setCoefficientsNotation(e.target.value)
-    disciplineNotations(stackedMatrixOfGenerators)
-  }
+    setCoefficientsNotation(e.target.value);
+    disciplineNotations(stackedMatrixOfGenerators);
+  };
 
   const handleChangeOfVariablesNotation = e => {
-    setVariablesNotation(e.target.value)
-    disciplineNotations(stackedMatrixOfGenerators)
-  }
+    setVariablesNotation(e.target.value);
+    disciplineNotations(stackedMatrixOfGenerators);
+  };
 
   const handleGoClick = () => {
-    let stackedMatrix = makeStackedMatrixOfGenerators(dimensions, degree)
-    disciplineNotations(stackedMatrix)
-    setStackedMatrixOfGenerators(stackedMatrix)
-  }
+    let stackedMatrix = makeStackedMatrixOfGenerators(dimensions, degree);
+    disciplineNotations(stackedMatrix);
+    setStackedMatrixOfGenerators(stackedMatrix);
+  };
 
   return (
-
     <div className="App">
-{/*       <Section>
+      {/*       <Section>
         <Plot
           paths={[
             plotForDegree(inputs, 1),
@@ -125,80 +129,107 @@ function App() {
             />
         </Section>
  */}
-        <Section>
+      <Section>
+        <h3>
+          &#x211D;<sup>n</sup>&#xffeb;&#x211D; polynomial generator
+        </h3>
 
-          <h3>&#x211D;<sup>n</sup>&#xffeb;&#x211D; polynomial generator</h3>
-          
-          <div>
-            <div className="div5">
-                <div className="marginated">Domain dimension (number of independent variables)</div>
-                <input className="short" type="number" max="4" min="1" value={dimensions} name="dimensions" id="dimensions" onChange={handleChangeOfDimensions}></input>
+        <div>
+          <div className="div5">
+            <div className="marginated">
+              Domain dimension (number of independent variables)
             </div>
-
-            <div className="div5">
-                <div className="marginated">Polynomial's degree</div>
-                <input className="short" type="number" max="9" min="1" value={degree} name="degree" id="degree" onChange={handleChangeOfDegree}></input>
-            </div>
-
-            <div className="div5">
-                <div className="marginated">Notation variant of the coefficients</div>
-                <select className="short" onChange={handleChangeOfCoefficientsNotation}>
-                    <option value="traditional">Traditional</option>
-                    <option value="pedantic">Pedantic</option>
-                </select>
-            </div>
-            
-            <div className="div5">
-                <div className="marginated">Notation variant of the independent variables</div>
-                <select className="short" onChange={handleChangeOfVariablesNotation}>
-                    <option value="traditional">Traditional</option>
-                    <option value="pedantic">Pedantic</option>
-                </select>
-            </div>
-            
-            <div className="div5">
-                <button className="short" onClick={handleGoClick}>Go</button>
-            </div>
-
-            <div className="clear"></div>
-
-          </div>
-          
-          <br/>
-
-          <p>
-
-            You'll need at least <b>{stackedMatrixOfGenerators.length}</b> data points, or 'training points' :), in order to obtain 
-            the coefficients for this type of polynomial
-          
-          </p>
-
-          <div className="left">
-
-            <h4>Powers matrix</h4>
-
-            <pre>
-                {stackedMatrixOfGenerators.map(row => row + "\n")}<br/>
-            </pre>
-
-          </div>
-
-          <div className="right">
-
-            <h4>Polynomial</h4>
-
-            <Polynomial 
-              coefficientsNotation={coefficientsNotation} 
-              variablesNotation={variablesNotation} 
-              stackedMatrix={stackedMatrixOfGenerators} 
+            <input
+              className="short"
+              type="number"
+              max="4"
+              min="1"
+              value={dimensions}
+              name="dimensions"
+              id="dimensions"
+              onChange={handleChangeOfDimensions}
             />
-
           </div>
 
-          <div className="clear"></div>
+          <div className="div5">
+            <div className="marginated">Polynomial's degree</div>
+            <input
+              className="short"
+              type="number"
+              max="9"
+              min="1"
+              value={degree}
+              name="degree"
+              id="degree"
+              onChange={handleChangeOfDegree}
+            />
+          </div>
 
-        </Section>
-      </div>
+          <div className="div5">
+            <div className="marginated">
+              Notation variant of the coefficients
+            </div>
+            <select
+              className="short"
+              onChange={handleChangeOfCoefficientsNotation}
+            >
+              <option value="traditional">Traditional</option>
+              <option value="pedantic">Pedantic</option>
+            </select>
+          </div>
+
+          <div className="div5">
+            <div className="marginated">
+              Notation variant of the independent variables
+            </div>
+            <select
+              className="short"
+              onChange={handleChangeOfVariablesNotation}
+            >
+              <option value="traditional">Traditional</option>
+              <option value="pedantic">Pedantic</option>
+            </select>
+          </div>
+
+          <div className="div5">
+            <button className="short" onClick={handleGoClick}>
+              Go
+            </button>
+          </div>
+
+          <div className="clear" />
+        </div>
+
+        <br />
+
+        <p>
+          You'll need at least <b>{stackedMatrixOfGenerators.length}</b> data
+          points, or 'training points' :), in order to obtain the coefficients
+          for this type of polynomial
+        </p>
+
+        <div className="left">
+          <h4>Powers matrix</h4>
+
+          <pre>
+            {stackedMatrixOfGenerators.map(row => row + "\n")}
+            <br />
+          </pre>
+        </div>
+
+        <div className="right">
+          <h4>Polynomial</h4>
+
+          <Polynomial
+            coefficientsNotation={coefficientsNotation}
+            variablesNotation={variablesNotation}
+            stackedMatrix={stackedMatrixOfGenerators}
+          />
+        </div>
+
+        <div className="clear" />
+      </Section>
+    </div>
   );
 }
 
